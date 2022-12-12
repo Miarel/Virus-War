@@ -7,18 +7,36 @@ public class CellState : MonoBehaviour
     private void OnEnable() 
     {
         Cell.StateChanged += ChangeState;
+        TutorialCell.StateChanged += ChangeState; 
+        //88
     }
 
     private void ChangeState(GameObject gameObject)
     {
-        Cell cell = gameObject.GetComponent<Cell>();
-        if(cell.currentState == Cell.CellState.Enemy || cell.currentState == Cell.CellState.Ally)
+        
+        //Cell cell = gameObject.GetComponent<Cell>();
+        
+        if (gameObject.TryGetComponent<Cell>(out var cell))
         {
-            cell.currentState = Cell.CellState.Neutral;
+            if(cell.currentState == Cell.CellState.Enemy || cell.currentState == Cell.CellState.Ally)
+            {
+                cell.currentState = Cell.CellState.Neutral;
+            }
+            if(cell.currentState == Cell.CellState.Neutral)
+            {
+                cell.currentState = Cell.CellState.Ally;
+            }
         }
-        if(cell.currentState == Cell.CellState.Neutral)
+        if (gameObject.TryGetComponent<TutorialCell>(out var tutorialCell))
         {
-            cell.currentState = Cell.CellState.Ally;
+            if(tutorialCell.currentState == TutorialCell.CellState.Enemy || tutorialCell.currentState == TutorialCell.CellState.Ally)
+            {
+                tutorialCell.currentState = TutorialCell.CellState.Neutral;
+            }
+            if(tutorialCell.currentState == TutorialCell.CellState.Neutral)
+            {
+                tutorialCell.currentState = TutorialCell.CellState.Ally;
+            }
         }
 
     }
@@ -26,6 +44,7 @@ public class CellState : MonoBehaviour
     private void OnDisable() 
     {
         Cell.StateChanged -= ChangeState;
+        TutorialCell.StateChanged -= ChangeState;
     }
     
 }

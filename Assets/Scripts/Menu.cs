@@ -17,22 +17,8 @@ public class Menu : MonoBehaviour
     {
         SceneManager.LoadScene("ModeSelector");
     }
-    public void OpenGameMode(int gameModeIndex)
+    public void CompleteTutorial()
     {
-        switch (gameModeIndex)
-        {
-            case 0:
-                SceneManager.LoadScene("SampleScene");
-                break;
-            case 1:
-                SceneManager.LoadScene("SampleScene");
-                break;
-            case 2:
-                SceneManager.LoadScene("SampleScene");
-                break;
-            case 3:
-                SceneManager.LoadScene("SampleScene");
-                break;
-        }
+        GameModeManager.isTutorialCompleted = true;
     }
 }

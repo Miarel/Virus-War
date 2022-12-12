@@ -7,11 +7,22 @@ using UnityEngine.SceneManagement;
 
 public class GameModeManager : MonoBehaviour
 {
+    public GameObject[] modes;
+    
+    public static bool isTutorialCompleted = false;
     [SerializeField] int gameModeIndex;
     public TextMeshProUGUI description;
     public void ChangeIndex(int index)
     {
-        gameModeIndex = index;
+        if (isTutorialCompleted) gameModeIndex = index;
+    }
+    public void UnlockModes()
+    {
+        foreach (var mode in modes)
+        {
+            mode.GetComponent<Image>().material= null;
+            mode.transform.GetChild(0).gameObject.SetActive(false);
+        }
     }
     void Update()
     {
@@ -30,13 +41,14 @@ public class GameModeManager : MonoBehaviour
                 description.text = "gm3";
                 break;
         }
+        if (isTutorialCompleted) UnlockModes();
     }
     public void OpenGameMode()
     {
         switch (gameModeIndex)
         {
             case 0:
-                SceneManager.LoadScene("SampleScene");
+                SceneManager.LoadScene("Tutorial");
                 break;
             case 1:
                 SceneManager.LoadScene("SampleScene");
