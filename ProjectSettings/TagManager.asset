@@ -3,10 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Cell
-  - Virus
-  - EnemyCell
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -41,18 +38,6 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Background
-    uniqueID: 1805816031
-    locked: 0
-  - name: VirusLayer
-    uniqueID: 3682166467
-    locked: 0
-  - name: ScoreLayer
-    uniqueID: 2654837247
-    locked: 0
-  - name: CellLayer
-    uniqueID: 148151283
-    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

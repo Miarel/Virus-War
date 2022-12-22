@@ -123,6 +123,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+<<<<<<< HEAD
 --- !u!1 &401134258
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,6 +225,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e89a2828644f734bb166079151098ab, type: 3}
+=======
+>>>>>>> 0bba5b6f1d1856a0bd0edcfe90102c6d4d455cef
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,11 +306,11 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!1001 &732647169
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1447,3 +1450,5 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2100960304}
   m_CullTransparentMesh: 1
+=======
+>>>>>>> 0bba5b6f1d1856a0bd0edcfe90102c6d4d455cef
