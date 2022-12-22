@@ -4,70 +4,105 @@ using UnityEngine;
 
 public class Virus : MonoBehaviour
 {
-    public static event System.Action<float, Cell> TouchedCell;
-    public static event System.Action<float, TutorialCell> TouchedTutorialCell;
-    [SerializeField] private float speed;
-    [SerializeField] private float damage;
-    private Transform targetPostion;
-    private bool gotTarget = true;
+public static event System.Action<float, Cell, Cell> TouchedEnemyCell;
+public static event System.Action TouchedAllyCell;
+[SerializeField] private float speed;
+[SerializeField] private float damage;
+private Transform targetPostion;
+private bool gotTarget = true;
+private Cell parentCell;
+private bool gotParent = true;
 
-    private void OnEnable() 
-    {
-        Cell.VirusSpawned += GetTargetPosition;
-        TutorialCell.VirusSpawned += GetTargetPosition;
-    }
-    
-    private void Update() 
-    {
-        Debug.Log(targetPostion);
-        MoveToCell(targetPostion);
-    }
+private void OnEnable()
+{
+Cell.VirusSpawned += GetTargetPosition;
+Cell.CellSpawnedVirus += GetParentCell;
+Bot.VirusSpawned += GetTargetPosition;
+Bot.CellSpawnedVirus += GetParentCell;
+Bullet.TouchedVirus += TouchedBullet;
+}
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.TryGetComponent<Cell>(out var cell))
-        { 
-            if(cell.currentState == Cell.CellState.Enemy || cell.currentState == Cell.CellState.Neutral)
+private void Update()
+{
+MoveToCell(targetPostion);
+}
+
+void OnTriggerEnter2D(Collider2D other)
+{
+if (other.TryGetComponent<Cell>(out var cell))
+{
+    if (parentCell.currentState == Cell.CellState.Ally)
             {
-                Destroy(gameObject);
-                TouchedCell?.Invoke(damage, cell); 
-            } 
-             
-        }
-        if (other.TryGetComponent<TutorialCell>(out var tutorialCell))
-        { 
-            Debug.Log(tutorialCell);
-            if(tutorialCell.currentState == TutorialCell.CellState.Enemy || tutorialCell.currentState == TutorialCell.CellState.Neutral)
+                if(cell.currentState == Cell.CellState.Enemy || cell.currentState == Cell.CellState.Neutral)
+                {
+                    Destroy(gameObject);
+                    TouchedEnemyCell?.Invoke(damage, cell, parentCell); 
+                }
+                if(cell != parentCell && Cell.CellState.Ally == cell.currentState)
+                {
+                    Destroy(gameObject);
+                    TouchedAllyCell?.Invoke();
+                }
+            }
+            else
+            if(parentCell.currentState == Cell.CellState.Enemy)
             {
-                Destroy(gameObject);
-                TouchedTutorialCell?.Invoke(damage, tutorialCell); 
-            } 
-             
-        }
-    }
+                if(cell.currentState == Cell.CellState.Ally || cell.currentState == Cell.CellState.Neutral)
+                {
+                    Destroy(gameObject);
+                    TouchedEnemyCell?.Invoke(damage, cell, parentCell); 
+                }
+                if(cell != parentCell && Cell.CellState.Enemy == cell.currentState)
+                {
+                    Destroy(gameObject);
+                    TouchedAllyCell?.Invoke();
+                }
+            }
+            
+}
+}
 
-    private void MoveToCell(Transform target)
+private void MoveToCell(Transform target)
+{
+if(TryGetComponent<Virus>(out var virus))
+{
+virus.transform.position = Vector3.MoveTowards(virus.transform.position, target.position, speed * Time.deltaTime);
+}
+}
+
+private void GetTargetPosition(Transform target)
+{
+if (gotTarget)
+{
+targetPostion = target;
+gotTarget = false;
+}
+
+}
+
+private void GetParentCell(Cell cell)
+{
+    if (gotParent) 
     {
-        if(TryGetComponent<Virus>(out var virus))
-        {
-            Debug.Log(targetPostion);
-            virus.transform.position = Vector3.MoveTowards(virus.transform.position, target.position, speed * Time.deltaTime); 
-            Debug.Log(targetPostion);
-        }
+        parentCell = cell;
+        gotParent = false;
     }
 
-    private void GetTargetPosition(Transform target)
-    {
-        if (gotTarget)
-        {
-            targetPostion = target;
-            gotTarget = false;
-        }
-        
-    }
+}
 
-    private void OnDisable() {
-        Cell.VirusSpawned -= GetTargetPosition;
-        TutorialCell.VirusSpawned -= GetTargetPosition;
-    }
+private void TouchedBullet(Virus virus)
+{
+if(this == virus)
+Destroy(gameObject);
+}
+
+
+private void OnDisable()
+{
+Cell.VirusSpawned -= GetTargetPosition;
+Cell.CellSpawnedVirus -= GetParentCell;
+Bullet.TouchedVirus -= TouchedBullet;
+Bot.CellSpawnedVirus -= GetParentCell;
+Bot.VirusSpawned -= GetTargetPosition;
+}
 }

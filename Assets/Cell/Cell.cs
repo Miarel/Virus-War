@@ -7,14 +7,15 @@ using TMPro;
 public class Cell : MonoBehaviour
 {
     public static event System.Action<Transform> VirusSpawned;
-    public static event System.Action<GameObject> StateChanged;
+    public static event System.Action<Cell> CellSpawnedVirus;
+    public static event System.Action<GameObject, Cell> StateChanged;
     [SerializeField] private TextMeshPro score;
     [SerializeField] private int capOfDNA;
     [SerializeField] private int viability;
-    [SerializeField] private float reproductionSpeed;
+    public float reproductionSpeed;
     [SerializeField] private float respawnTime;
     private int amountOfDNA = 20;
-    private float tempDNA;
+    public float tempDNA;
     private Ray currentRay;
     private RaycastHit2D currentHit;
     private bool currentCoroutineState = false;
@@ -23,12 +24,6 @@ public class Cell : MonoBehaviour
     public enum CellState {Ally,Enemy,Neutral};
     [SerializeField] public CellState currentState;
     
-    
-    private void Start() 
-    {
-        
-    }
-
     void Update()
     {
        CheckStatus();
@@ -41,7 +36,8 @@ public class Cell : MonoBehaviour
         InputHandler.RightClicked += DeselectAllyCell;
         InputHandler.LeftClicked += GetEnemyCellHitPosition;
         InputHandler.LeftClicked += ClickedOnEnemyCell;
-        Virus.TouchedCell += TakeDamage;
+        Virus.TouchedEnemyCell += TakeDamage;
+        Virus.TouchedAllyCell += GetHeal;
     }
 
 
@@ -50,6 +46,7 @@ public class Cell : MonoBehaviour
         if (tempDNA <= capOfDNA && currentState != CellState.Neutral)
         {
             tempDNA += reproductionSpeed * Time.deltaTime;
+            Debug.Log(currentState);
             amountOfDNA = Mathf.RoundToInt(tempDNA);
             score.text = amountOfDNA.ToString();
         }
@@ -70,6 +67,7 @@ public class Cell : MonoBehaviour
                     amountOfDNA = Mathf.RoundToInt(tempDNA);
                     score.text = amountOfDNA.ToString();
                     VirusSpawned?.Invoke(hit.transform);
+                    CellSpawnedVirus(this);
                 }
             }
         }
@@ -152,20 +150,31 @@ public class Cell : MonoBehaviour
         }
     }
 
-    private void TakeDamage(float damage, Cell cell)
+    private void TakeDamage(float damage, Cell cell, Cell parentCell)
     {
         if (this != cell) return;
         if(tempDNA - damage <= 0 )
         {
-            StateChanged?.Invoke(gameObject);
+            StateChanged?.Invoke(gameObject, parentCell);
             tempDNA = 0;
             amountOfDNA = Mathf.RoundToInt(tempDNA);
             score.text = amountOfDNA.ToString();
+            viability = parentCell.viability;
             
         }
         else
         {  
             tempDNA -= damage;
+            amountOfDNA = Mathf.RoundToInt(tempDNA);
+            score.text = amountOfDNA.ToString();
+        }
+    }
+
+    private void GetHeal()
+    {
+        if (gameObject.GetComponent<Cell>().currentState != CellState.Neutral)
+        {
+            tempDNA += 1;
             amountOfDNA = Mathf.RoundToInt(tempDNA);
             score.text = amountOfDNA.ToString();
         }
@@ -177,6 +186,7 @@ public class Cell : MonoBehaviour
         InputHandler.RightClicked -= DeselectAllyCell;
         InputHandler.LeftClicked -= GetEnemyCellHitPosition;
         InputHandler.LeftClicked -= ClickedOnEnemyCell;
-        Virus.TouchedCell -= TakeDamage;
+        Virus.TouchedEnemyCell -= TakeDamage;
+        Virus.TouchedAllyCell -= GetHeal;
     }
 }

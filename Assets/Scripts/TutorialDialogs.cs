@@ -22,11 +22,9 @@ public class TutorialDialogs : MonoBehaviour
     private bool nextTip = false;
     [TextArea(3,10)]
     [SerializeField] string[] textBlock1;
-    [SerializeField] string[] textBlock2;
     private void Start()
     {
-        var cell = tutorialCell.GetComponent<TutorialCell>();
-        //cell.reproductionSpeed = 0;
+        var cell = tutorialCell.GetComponent<Cell>();
         StartCoroutine(RunTutorial());
     }
     IEnumerator RunTutorial()
@@ -52,7 +50,7 @@ public class TutorialDialogs : MonoBehaviour
     }
     public void Update()
     {
-        var cell = tutorialCell.GetComponent<TutorialCell>();
+        var cell = tutorialCell.GetComponent<Cell>();
         if (cell.isSelected && isFirstTip)
         {
             arrow.SetActive(false);
@@ -86,7 +84,7 @@ public class TutorialDialogs : MonoBehaviour
             var x = arrow.GetComponent<RectTransform>();
             x.anchorMax = new Vector2 (0.72f, 0.9f);
             x.anchorMin = new Vector2 (0.62f, 0.8f);
-            if ((tutorialNeutralCell.GetComponent<TutorialCell>().currentState).ToString()=="Ally")
+            if ((tutorialNeutralCell.GetComponent<Cell>().currentState).ToString()=="Ally")
             {
                 ContinueTutorial();
                 Debug.Log("complete");
@@ -99,8 +97,8 @@ public class TutorialDialogs : MonoBehaviour
         {
             arrowLow.SetActive(true);
             tutorialEnemyCell.SetActive(true);
-            tutorialEnemyCell.GetComponent<TutorialCell>().reproductionSpeed = 0.5f;
-            if (tutorialEnemyCell.GetComponent<TutorialCell>().currentState.ToString()=="Ally") 
+            tutorialEnemyCell.GetComponent<Cell>().reproductionSpeed = 0.5f;
+            if (tutorialEnemyCell.GetComponent<Cell>().currentState.ToString()=="Ally") 
             {
                 back.SetActive(true);
                 ContinueTutorial();

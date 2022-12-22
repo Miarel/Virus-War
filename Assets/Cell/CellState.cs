@@ -1,50 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class CellState : MonoBehaviour
 {
+    public static event System.Action StateChangedT;
     private void OnEnable() 
     {
         Cell.StateChanged += ChangeState;
-        TutorialCell.StateChanged += ChangeState; 
+        //TutorialCell.StateChanged += ChangeState; 
         //88
     }
-
-    private void ChangeState(GameObject gameObject)
+    private void OnDisable() 
     {
-        
-        //Cell cell = gameObject.GetComponent<Cell>();
-        
+        Cell.StateChanged -= ChangeState;
+        //TutorialCell.StateChanged -= ChangeState;
+    }
+
+    private void ChangeState(GameObject gameObject, Cell parentCell)
+    {        
         if (gameObject.TryGetComponent<Cell>(out var cell))
         {
             if(cell.currentState == Cell.CellState.Enemy || cell.currentState == Cell.CellState.Ally)
             {
                 cell.currentState = Cell.CellState.Neutral;
             }
-            if(cell.currentState == Cell.CellState.Neutral)
+            if(cell.currentState == Cell.CellState.Neutral && parentCell.currentState == Cell.CellState.Ally)
             {
                 cell.currentState = Cell.CellState.Ally;
             }
-        }
-        if (gameObject.TryGetComponent<TutorialCell>(out var tutorialCell))
-        {
-            if(tutorialCell.currentState == TutorialCell.CellState.Enemy || tutorialCell.currentState == TutorialCell.CellState.Ally)
+            if(cell.currentState == Cell.CellState.Neutral && parentCell.currentState == Cell.CellState.Enemy)
             {
-                tutorialCell.currentState = TutorialCell.CellState.Neutral;
-            }
-            if(tutorialCell.currentState == TutorialCell.CellState.Neutral)
-            {
-                tutorialCell.currentState = TutorialCell.CellState.Ally;
+                cell.currentState = Cell.CellState.Enemy;
             }
         }
-
     }
-
-    private void OnDisable() 
-    {
-        Cell.StateChanged -= ChangeState;
-        TutorialCell.StateChanged -= ChangeState;
-    }
-    
 }
