@@ -5,6 +5,7 @@ using TMPro;
  
 public class Timer: MonoBehaviour
 {
+    private LevelHandler lh = new LevelHandler();
     [SerializeField] private float time;
     [SerializeField] private TMP_Text timerText;
  
@@ -29,7 +30,10 @@ public class Timer: MonoBehaviour
     private void UpdateTimeText()
     {
         if (_timeLeft < 0)
+        {
             _timeLeft = 0;
+            LevelHandler.isTimeEnded = true;
+        }
  
         float minutes = Mathf.FloorToInt(_timeLeft / 60);
         float seconds = Mathf.FloorToInt(_timeLeft % 60);

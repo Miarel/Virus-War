@@ -5,6 +5,7 @@ using UnityEngine;
 public class Virus : MonoBehaviour
 {
 public static event System.Action<float, Cell, Cell> TouchedEnemyCell;
+public static event System.Action<float, Cell, Cell> TouchedEnemyCellDmg;
 public static event System.Action TouchedAllyCell;
 [SerializeField] private float speed;
 [SerializeField] private float damage;
@@ -37,11 +38,13 @@ if (other.TryGetComponent<Cell>(out var cell))
                 {
                     Destroy(gameObject);
                     TouchedEnemyCell?.Invoke(damage, cell, parentCell); 
+                    Debug.Log("1");
                 }
                 if(cell != parentCell && Cell.CellState.Ally == cell.currentState)
                 {
                     Destroy(gameObject);
                     TouchedAllyCell?.Invoke();
+                    Debug.Log("2");
                 }
             }
             else
@@ -49,6 +52,7 @@ if (other.TryGetComponent<Cell>(out var cell))
             {
                 if(cell.currentState == Cell.CellState.Ally || cell.currentState == Cell.CellState.Neutral)
                 {
+                    Debug.Log("3");
                     Destroy(gameObject);
                     TouchedEnemyCell?.Invoke(damage, cell, parentCell); 
                 }
@@ -56,6 +60,7 @@ if (other.TryGetComponent<Cell>(out var cell))
                 {
                     Destroy(gameObject);
                     TouchedAllyCell?.Invoke();
+                    Debug.Log("4");
                 }
             }
             

@@ -7,26 +7,29 @@ public class Bot : MonoBehaviour
 {
     public static event System.Action<Transform> VirusSpawned;
     public static event System.Action<Cell> CellSpawnedVirus;
-    public GameObject[] cells;
+    public static event System.Action<GameObject, Cell> StateChanged;
     Cell targetCell;
-    float tempDNA;
+    public float tempDNA;
     bool currentCoroutineState = false;
     float respawnTime=1;
     [SerializeField] private GameObject virusPrefab;
     [SerializeField] public TextMeshPro score;
     private int amountOfDNA = 20;
-    private bool canSpawn = true;
     
     void Start()
     {
-        
     }
 
     
     // Update is called once per frame
     void Update()
     {
-        if (gameObject.GetComponent<Cell>().currentState == Cell.CellState.Enemy){tempDNA = gameObject.GetComponent<Cell>().tempDNA;}
+        if (tempDNA <= gameObject.GetComponent<Cell>().capOfDNA && gameObject.GetComponent<Cell>().currentState == Cell.CellState.Enemy)
+        {
+            tempDNA += gameObject.GetComponent<Cell>().reproductionSpeed * Time.deltaTime;
+            amountOfDNA = Mathf.RoundToInt(tempDNA);
+            score.text = amountOfDNA.ToString();
+        }
         SearchTarget();
     }
     void SearchTarget()
@@ -65,21 +68,40 @@ public class Bot : MonoBehaviour
     
     public void spawnVirus(Cell cell)
     {
-        
+        if (cell.currentState == Cell.CellState.Ally || cell.currentState == Cell.CellState.Neutral)
         {
-            
-            
-            {   
-                if (cell.currentState == Cell.CellState.Ally || cell.currentState == Cell.CellState.Neutral)
-                {
-                    GameObject virus = Instantiate(virusPrefab,gameObject.transform.position,gameObject.transform.rotation) as GameObject; 
-                    tempDNA -= 1;
-                    amountOfDNA = Mathf.RoundToInt(tempDNA);
-                    score.text = amountOfDNA.ToString();
-                    VirusSpawned?.Invoke(cell.transform);
-                    CellSpawnedVirus?.Invoke(gameObject.GetComponent<Cell>());
-                }
-            }
+            GameObject virus = Instantiate(virusPrefab,gameObject.transform.position,gameObject.transform.rotation) as GameObject; 
+            tempDNA--;
+            amountOfDNA = Mathf.RoundToInt(tempDNA);
+            score.text = amountOfDNA.ToString();
+            VirusSpawned?.Invoke(cell.transform);
+            CellSpawnedVirus?.Invoke(gameObject.GetComponent<Cell>());
         }
+    }
+    private void TakeDamage(float damage, Cell cell, Cell parentCell)
+    {
+        if (this != cell) return;
+        if(tempDNA - damage <= 0 )
+        {
+            StateChanged?.Invoke(gameObject, parentCell);
+            tempDNA = 0;
+            amountOfDNA = Mathf.RoundToInt(tempDNA);
+            score.text = amountOfDNA.ToString();
+            
+        }
+        else
+        {  
+            tempDNA -= damage;
+            amountOfDNA = Mathf.RoundToInt(tempDNA);
+            score.text = amountOfDNA.ToString();
+        }
+    }
+    private void OnEnable() 
+    {
+        Virus.TouchedEnemyCellDmg += TakeDamage;
+    }
+    private void OnDisable() 
+    {
+        Virus.TouchedEnemyCellDmg -= TakeDamage;
     }
 }

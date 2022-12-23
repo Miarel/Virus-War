@@ -10,7 +10,7 @@ public class Cell : MonoBehaviour
     public static event System.Action<Cell> CellSpawnedVirus;
     public static event System.Action<GameObject, Cell> StateChanged;
     [SerializeField] private TextMeshPro score;
-    [SerializeField] private int capOfDNA;
+    public int capOfDNA;
     [SerializeField] private int viability;
     public float reproductionSpeed;
     [SerializeField] private float respawnTime;
@@ -27,7 +27,8 @@ public class Cell : MonoBehaviour
     void Update()
     {
        CheckStatus();
-       ReproductiveGrowth();   
+       Fix();
+       ReproductiveGrowth();
     }
      
 
@@ -43,7 +44,7 @@ public class Cell : MonoBehaviour
 
     public void ReproductiveGrowth()
     {
-        if (tempDNA <= capOfDNA && currentState != CellState.Neutral)
+        if (tempDNA <= capOfDNA && currentState == CellState.Ally)
         {
             tempDNA += reproductionSpeed * Time.deltaTime;
             Debug.Log(currentState);
@@ -149,6 +150,13 @@ public class Cell : MonoBehaviour
                 StartCoroutine(SpawnVirusCoroutine());
         }
     }
+    private void Fix()
+    {
+        if (TryGetComponent<Bot>(out Bot bot))
+        {
+            if (currentState == CellState.Enemy) tempDNA = bot.tempDNA;
+        }
+    }
 
     private void TakeDamage(float damage, Cell cell, Cell parentCell)
     {
@@ -159,14 +167,15 @@ public class Cell : MonoBehaviour
             tempDNA = 0;
             amountOfDNA = Mathf.RoundToInt(tempDNA);
             score.text = amountOfDNA.ToString();
-            viability = parentCell.viability;
-            
+            viability = parentCell.viability;    
         }
         else
-        {  
+        {
             tempDNA -= damage;
+            if (TryGetComponent<Bot>(out Bot bot) && bot.tempDNA>=damage) bot.tempDNA -=damage;
             amountOfDNA = Mathf.RoundToInt(tempDNA);
             score.text = amountOfDNA.ToString();
+            viability = parentCell.viability;
         }
     }
 

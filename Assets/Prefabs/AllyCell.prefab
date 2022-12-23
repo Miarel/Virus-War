@@ -120,8 +120,8 @@ MonoBehaviour:
   score: {fileID: 565313128148035813}
   capOfDNA: 50
   viability: 2
-  reproductionSpeed: 2
-  respawnTime: 1
+  reproductionSpeed: 3
+  respawnTime: 5
   tempDNA: 0
   isSelected: 0
   virusPrefab: {fileID: 607537086345892981, guid: f45e0d458b1dc24489b91bc73913cb30, type: 3}
