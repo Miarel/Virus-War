@@ -25,7 +25,7 @@ Bullet.TouchedVirus += TouchedBullet;
 
 private void Update()
 {
-MoveToCell(targetPostion);
+    MoveToCell(targetPostion);
 }
 
 void OnTriggerEnter2D(Collider2D other)
@@ -37,42 +37,36 @@ if (other.TryGetComponent<Cell>(out var cell))
                 if(cell.currentState == Cell.CellState.Enemy || cell.currentState == Cell.CellState.Neutral)
                 {
                     Destroy(gameObject);
-                    TouchedEnemyCell?.Invoke(damage, cell, parentCell); 
-                    Debug.Log("1");
+                    TouchedEnemyCell?.Invoke(damage, cell, parentCell);
                 }
                 if(cell != parentCell && Cell.CellState.Ally == cell.currentState)
                 {
                     Destroy(gameObject);
                     TouchedAllyCell?.Invoke();
-                    Debug.Log("2");
                 }
             }
-            else
-            if(parentCell.currentState == Cell.CellState.Enemy)
+    else if(parentCell.currentState == Cell.CellState.Enemy)
+    {
+        if(cell.currentState == Cell.CellState.Ally || cell.currentState == Cell.CellState.Neutral)
             {
-                if(cell.currentState == Cell.CellState.Ally || cell.currentState == Cell.CellState.Neutral)
-                {
-                    Debug.Log("3");
-                    Destroy(gameObject);
-                    TouchedEnemyCell?.Invoke(damage, cell, parentCell); 
-                }
-                if(cell != parentCell && Cell.CellState.Enemy == cell.currentState)
-                {
-                    Destroy(gameObject);
-                    TouchedAllyCell?.Invoke();
-                    Debug.Log("4");
-                }
+                Destroy(gameObject);
+                TouchedEnemyCell?.Invoke(damage, cell, parentCell); 
             }
-            
-}
+            if(cell != parentCell && Cell.CellState.Enemy == cell.currentState)
+            {
+                Destroy(gameObject);
+                TouchedAllyCell?.Invoke();
+            }
+        }
+    }
 }
 
 private void MoveToCell(Transform target)
 {
-if(TryGetComponent<Virus>(out var virus))
-{
-virus.transform.position = Vector3.MoveTowards(virus.transform.position, target.position, speed * Time.deltaTime);
-}
+    if(TryGetComponent<Virus>(out var virus))
+    {
+        virus.transform.position = Vector3.MoveTowards(virus.transform.position, target.position, speed * Time.deltaTime);
+    }
 }
 
 private void GetTargetPosition(Transform target)

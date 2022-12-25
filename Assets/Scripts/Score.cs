@@ -1,44 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Score : MonoBehaviour
 {
-    private Dictionary<Player, long> playersValue = new Dictionary<Player, long>();
-
-    public void ChangePlayerScore(Player player, long scoreValue) {
-        playersValue[player] = scoreValue;
+    [SerializeField] private TMP_Text scoreText;
+    private float score;
+    [SerializeField] private Cell.CellState state;
+    Cell[] cells;
+    // Start is called before the first frame update
+    void Start()
+    {
+        cells = GameObject.FindObjectsOfType<Cell>();
     }
 
-    public void AddPlayer(Player player) {
-
-        if (playersValue.ContainsKey(player))
-            throw new System.Exception(player.name + ", This player is already on the list");
-
-        playersValue.Add(player, 0);
-    }
-
-    public void AddPlayer(Player player,long value) {
-        if (playersValue.ContainsKey(player))
-            throw new System.Exception(player.name + ", This player is already on the list");
-
-        playersValue.Add(player, value);
-
-    }
-
-    public Player GetPlayerWithMaxScore() {
-
-        Player playerMax = null;
-        long maxScore = 0;
-
-        foreach (var pair in playersValue) { 
-           if(pair.Value > maxScore) { 
-                maxScore = pair.Value;
-                playerMax = pair.Key;
-            }
-                
+    // Update is called once per frame
+    void Update()
+    {
+        foreach (Cell cell in cells)
+        {
+            if (cell.currentState == state) score += cell.tempDNA;
         }
-        
-        return playerMax;
+        scoreText.text = Mathf.RoundToInt(score).ToString();
+        score = 0;
     }
 }

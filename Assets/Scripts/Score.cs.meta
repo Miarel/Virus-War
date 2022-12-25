@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Scripts/Cells/Bot.cs.meta
-guid: 8bbe66d6faeb02e4494e356ac021f5e7
-========
-guid: b9e32b3448934464c82bc491ed79c98e
->>>>>>>> 0bba5b6f1d1856a0bd0edcfe90102c6d4d455cef:Assets/Scripts/Score.cs.meta
+guid: 3173c7562c8b01e4eba8556bfc86eb0a
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
