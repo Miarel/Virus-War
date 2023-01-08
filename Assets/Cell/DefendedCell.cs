@@ -37,6 +37,7 @@ public class DefendedCell : MonoBehaviour
         Transform nearestEnemy = null;
         float nearestEnemyDistance = Mathf.Infinity;
         Cell cell = this.GetComponent<Cell>();
+        Debug.Log(string.Join(",", FindObjectsOfType<>().ToString()));
         foreach(Virus virus in FindObjectsOfType<Virus>())
         {
             float currentDistance = Vector2.Distance(transform.position, virus.transform.position);
